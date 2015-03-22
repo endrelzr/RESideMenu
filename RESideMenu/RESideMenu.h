@@ -74,6 +74,10 @@
 @property (assign, readwrite, nonatomic) UIStatusBarStyle menuPreferredStatusBarStyle;
 @property (assign, readwrite, nonatomic) IBInspectable BOOL menuPrefersStatusBarHidden;
 
+@property (assign, readwrite, nonatomic) IBInspectable BOOL statusBarBackgroundAnimationEnabled;
+@property (strong, readonly, nonatomic) IBInspectable UIColor *statusBarBackgroundColor; //if nil then opaque
+
+
 - (id)initWithContentViewController:(UIViewController *)contentViewController
              leftMenuViewController:(UIViewController *)leftMenuViewController
             rightMenuViewController:(UIViewController *)rightMenuViewController;
@@ -81,6 +85,7 @@
 - (void)presentRightMenuViewController;
 - (void)hideMenuViewController;
 - (void)setContentViewController:(UIViewController *)contentViewController animated:(BOOL)animated;
+- (void)setStatusBarBackgroundColor:(UIColor *)statusBarBackgroundColor;
 
 @end
 
