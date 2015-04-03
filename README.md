@@ -1,5 +1,7 @@
 # RESideMenu
 
+Added status bar background functionality. 
+
 iOS 7/8 style side menu with parallax effect inspired by Dribbble shots ([first](http://dribbble.com/shots/1116265-Instasave-iPhone-App) and [second](http://dribbble.com/shots/1114754-Social-Feed-iOS7)).
 
 Since version 4.0 you can add menu view controllers on both left and right sides of your content view controller.
