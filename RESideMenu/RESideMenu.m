@@ -117,8 +117,6 @@
     _contentViewInPortraitOffsetCenterX  = 30.f;
     _contentViewScaleValue = 0.7f;
     
-    _statusBarViewContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIApplication sharedApplication ] statusBarFrame].size.height)];
-    _statusBarViewContainer.alpha = 0.0f;
 }
 
 #pragma mark -
@@ -134,24 +132,6 @@
     }
     
     return self;
-}
-
-- (void) setStatusBarBackgroundColor:(UIColor *)statusBarBackgroundColor
-{
-    if (statusBarBackgroundColor)
-    {
-        self.statusBarViewContainer.backgroundColor = statusBarBackgroundColor;
-        if (!self.statusBarBackgroundAnimationEnabled)
-            _statusBarViewContainer.alpha = 1.0f;
-        else
-            _statusBarViewContainer.alpha = 0.0f;
-    }
-    else
-    {
-        self.statusBarViewContainer.backgroundColor = nil;
-        _statusBarViewContainer.alpha = 0.0f;
-    }
-    
 }
 
 - (void)presentLeftMenuViewController
@@ -227,10 +207,13 @@
     [self.view addSubview:self.menuViewContainer];
     [self.view addSubview:self.contentViewContainer];
     
-    [self.view addSubview:self.statusBarViewContainer];
-    if (!self.statusBarBackgroundAnimationEnabled) {
-        self.statusBarViewContainer.alpha = 1.0f;
-    }
+    _statusBarViewContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIApplication sharedApplication ] statusBarFrame].size.height)];
+    [self.view addSubview:_statusBarViewContainer];
+    
+    _statusBarViewContainer.alpha = (self.menuPrefersStatusBarBackground && !self.animateStatusBarBackground) ? 1.0 : 0.0;
+    _statusBarViewContainer.backgroundColor = self.statusBarBackgroundColor;
+
+    
     
     self.menuViewContainer.frame = self.view.bounds;
     self.menuViewContainer.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -271,6 +254,8 @@
         panGestureRecognizer.delegate = self;
         [self.view addGestureRecognizer:panGestureRecognizer];
     }
+    
+    [self.view bringSubviewToFront:_statusBarViewContainer];
     
     [self updateContentViewShadow];
 }
@@ -329,9 +314,9 @@
         if (self.scaleBackgroundImageView)
             self.backgroundImageView.transform = CGAffineTransformIdentity;
         
-        if (self.statusBarBackgroundAnimationEnabled) {
+        if (self.animateStatusBarBackground && self.menuPrefersStatusBarBackground)
             self.statusBarViewContainer.alpha = 1.0f;
-        }
+        
         
     } completion:^(BOOL finished) {
         [self addContentViewControllerMotionEffects];
@@ -374,7 +359,7 @@
         if (self.scaleBackgroundImageView)
             self.backgroundImageView.transform = CGAffineTransformIdentity;
         
-        if (self.statusBarBackgroundAnimationEnabled) {
+        if (self.animateStatusBarBackground && self.menuPrefersStatusBarBackground) {
             self.statusBarViewContainer.alpha = 1.0f;
         }
         
@@ -425,7 +410,7 @@
         strongSelf.menuViewContainer.alpha = !self.fadeMenuView ?: 0;
         strongSelf.contentViewContainer.alpha = 1;
         
-        if (strongSelf.statusBarBackgroundAnimationEnabled)
+        if (strongSelf.animateStatusBarBackground)
             strongSelf.statusBarViewContainer.alpha = 0;
         
         if (strongSelf.scaleBackgroundImageView) {
@@ -658,7 +643,7 @@
         self.menuViewContainer.alpha = !self.fadeMenuView ?: delta;
         self.contentViewContainer.alpha = 1 - (1 - self.contentViewFadeOutAlpha) * delta;
         
-        if (self.statusBarBackgroundAnimationEnabled)
+        if (self.animateStatusBarBackground && self.menuPrefersStatusBarBackground)
             self.statusBarViewContainer.alpha = delta * 2.0f;
         
         if (self.scaleBackgroundImageView) {
@@ -769,7 +754,21 @@
 #pragma mark -
 #pragma mark Setters
 
-
+- (void) setStatusBarBackgroundColor:(UIColor *)statusBarBackgroundColor
+{
+    _statusBarBackgroundColor = statusBarBackgroundColor;
+    self.statusBarViewContainer.backgroundColor = statusBarBackgroundColor;
+    
+    if (self.menuPrefersStatusBarBackground){
+        if (self.animateStatusBarBackground)
+            _statusBarViewContainer.alpha = _visible ? 1.0 : 0.0;
+        else
+            _statusBarViewContainer.alpha = 1.0f;
+    } else {
+        _statusBarViewContainer.alpha = 0.0;
+    }
+    
+}
 
 - (void)setBackgroundImage:(UIImage *)backgroundImage
 {
@@ -816,6 +815,7 @@
     
     [self addMenuViewControllerMotionEffects];
     [self.view bringSubviewToFront:self.contentViewContainer];
+    [self.view bringSubviewToFront:_statusBarViewContainer];
 }
 
 - (void)setRightMenuViewController:(UIViewController *)rightMenuViewController
@@ -835,6 +835,7 @@
     
     [self addMenuViewControllerMotionEffects];
     [self.view bringSubviewToFront:self.contentViewContainer];
+    [self.view bringSubviewToFront:_statusBarViewContainer];
 }
 
 #pragma mark -
@@ -872,6 +873,8 @@
         self.contentViewContainer.center = center;
     }
     
+    [self.statusBarViewContainer setFrame:CGRectMake(0, 0, self.view.bounds.size.width, [[UIApplication sharedApplication ] statusBarFrame].size.height == 40 ? 20 : [[UIApplication sharedApplication ] statusBarFrame].size.height)];
+    
     [self updateContentViewShadow];
 }
 
@@ -903,6 +906,9 @@
                            statusBarHidden = self.contentViewController.prefersStatusBarHidden;
                        }
                        );
+
+    [self.statusBarViewContainer setFrame:CGRectMake(0, 0, self.view.bounds.size.width, statusBarHidden? 0 : 20)];
+    
     return statusBarHidden;
 }
 
@@ -919,5 +925,7 @@
                        );
     return statusBarAnimation;
 }
+
+
 
 @end

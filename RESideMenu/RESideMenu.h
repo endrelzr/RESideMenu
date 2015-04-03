@@ -74,8 +74,9 @@
 @property (assign, readwrite, nonatomic) UIStatusBarStyle menuPreferredStatusBarStyle;
 @property (assign, readwrite, nonatomic) IBInspectable BOOL menuPrefersStatusBarHidden;
 
-@property (assign, readwrite, nonatomic) IBInspectable BOOL statusBarBackgroundAnimationEnabled;
-@property (strong, readonly, nonatomic) IBInspectable UIColor *statusBarBackgroundColor; //if nil then opaque
+@property (assign, readwrite, nonatomic) IBInspectable BOOL menuPrefersStatusBarBackground;
+@property (assign, readwrite, nonatomic) IBInspectable BOOL animateStatusBarBackground;
+@property (strong, readonly, nonatomic) IBInspectable UIColor *statusBarBackgroundColor;
 
 
 - (id)initWithContentViewController:(UIViewController *)contentViewController
