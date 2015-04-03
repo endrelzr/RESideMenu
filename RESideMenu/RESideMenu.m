@@ -227,12 +227,10 @@
     [self.view addSubview:self.menuViewContainer];
     [self.view addSubview:self.contentViewContainer];
     
-    //ENdre
-    [self.view addSubview:self.statusBarViewContainer]; //Endre edit
+    [self.view addSubview:self.statusBarViewContainer];
     if (!self.statusBarBackgroundAnimationEnabled) {
         self.statusBarViewContainer.alpha = 1.0f;
     }
-    //Endre end
     
     self.menuViewContainer.frame = self.view.bounds;
     self.menuViewContainer.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -332,7 +330,7 @@
             self.backgroundImageView.transform = CGAffineTransformIdentity;
         
         if (self.statusBarBackgroundAnimationEnabled) {
-            self.statusBarViewContainer.alpha = 1.0f; //Endre edit
+            self.statusBarViewContainer.alpha = 1.0f;
         }
         
     } completion:^(BOOL finished) {
@@ -377,7 +375,7 @@
             self.backgroundImageView.transform = CGAffineTransformIdentity;
         
         if (self.statusBarBackgroundAnimationEnabled) {
-            self.statusBarViewContainer.alpha = 1.0f; //Endre edit
+            self.statusBarViewContainer.alpha = 1.0f;
         }
         
     } completion:^(BOOL finished) {
@@ -428,7 +426,7 @@
         strongSelf.contentViewContainer.alpha = 1;
         
         if (strongSelf.statusBarBackgroundAnimationEnabled)
-            strongSelf.statusBarViewContainer.alpha = 0; //Endre edit
+            strongSelf.statusBarViewContainer.alpha = 0;
         
         if (strongSelf.scaleBackgroundImageView) {
             strongSelf.backgroundImageView.transform = CGAffineTransformMakeScale(1.7f, 1.7f);
@@ -640,8 +638,7 @@
         if (self.visible) {
             delta = self.originalPoint.x != 0 ? (point.x + self.originalPoint.x) / self.originalPoint.x : 0;
         } else {
-            // delta = point.x / self.view.frame.size.width;
-            delta = point.x / (self.view.frame.size.width / 2.0 + ([[UIApplication sharedApplication] statusBarOrientation] ? self.contentViewInPortraitOffsetCenterX : self.contentViewInLandscapeOffsetCenterX)); // Endre edit
+            delta = point.x / (self.view.frame.size.width / 2.0 + ([[UIApplication sharedApplication] statusBarOrientation] ? self.contentViewInPortraitOffsetCenterX : self.contentViewInLandscapeOffsetCenterX));
         }
         delta = MIN(fabs(delta), 1.6);
         
@@ -649,15 +646,13 @@
         
         CGFloat backgroundViewScale = 1.7f - (0.7f * delta);
         
-        //CGFloat menuViewScale = 1.5f - (0.5f * delta); //Endre edit
-        CGFloat menuViewScale = self.menuViewControllerTransformation.a + ((1.0f - self.menuViewControllerTransformation.a) * delta); // Endre edit
+        CGFloat menuViewScale = self.menuViewControllerTransformation.a + ((1.0f - self.menuViewControllerTransformation.a) * delta);
         
         if (!self.bouncesHorizontally) {
             contentViewScale = MAX(contentViewScale, self.contentViewScaleValue);
             backgroundViewScale = MAX(backgroundViewScale, 1.0);
             
-            //menuViewScale = MAX(menuViewScale, 1.0); // Endre edit
-            menuViewScale = MIN(menuViewScale, 1.0); // Endre edit
+            menuViewScale = MIN(menuViewScale, 1.0);
         }
         
         self.menuViewContainer.alpha = !self.fadeMenuView ?: delta;
@@ -688,8 +683,6 @@
                 point.x = MAX(0.0, point.x);
         }
         
-        // Limit size
-        //
         if (point.x < 0) {
             point.x = MAX(point.x, -[UIScreen mainScreen].bounds.size.height);
         } else {
